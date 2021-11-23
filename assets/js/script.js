@@ -43,13 +43,27 @@ var saveTasks = function () {
 };
 
 $(".list-group").on("click", "p", function () {
-  var text = $(this).text().trim();
-  var textInput = $("<textarea>").addClass("form-control").val(text);
-  $(this).replaceWith(textInput);
-  textInput.trigger("focus");
+  // get current text
+  var date = $(this).text().trim();
+
+  // create new input element
+  var dateInput = $("<input>")
+    .attr("type", "text")
+    .addClass("form-control")
+    .val(date);
+
+  $(this).replaceWith(dateInput);
+
+  // enable jquery ui datepicker
+  dateInput.datepicker({
+    minDate: 1,
+  });
+
+  // automatically bring up the calendar
+  dateInput.trigger("focus");
 });
 
-$(".list-group").on("blur", "textarea", function () {
+$(".list-group").on("change", "input[type='text']", function () {
   // get the textarea's current value/text
   var text = $(this).val().trim();
 
@@ -129,10 +143,19 @@ $(".list-group").on("click", "span", function () {
 
   // automatically focus on new element
   dateInput.trigger("focus");
+
+  // enable jquery ui datepicker
+  dateInput.datepicker({
+    minDate: 1,
+    onClose: function () {
+      // when calendar is closed, force a "change" event on the `dateInput`
+      $(this).trigger("change");
+    },
+  });
 });
 
 // value of due date was changed
-$(".list-group").on("blur", "input[type='text']", function () {
+$(".list-group").on("change", "input[type='text']", function () {
   // get current text
   var date = $(this).val().trim();
 
@@ -215,4 +238,8 @@ $("#trash").droppable({
   out: function (event, ui) {
     console.log("out");
   },
+});
+
+$("#modalDueDate").datepicker({
+  minDate: 1,
 });
